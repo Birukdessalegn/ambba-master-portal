@@ -47,19 +47,34 @@ export default function ClientCard({ client, liveData, onRenewQuick, onOpenCusto
 
   const handleQuick = async (days) => {
     setLoadingAction(true);
-    await onRenewQuick(client, days);
+    const res = await onRenewQuick(client, days, false);
     setLoadingAction(false);
+    if (res?.success) {
+      alert(`✅ ${client.name}: Extended by ${days} days successfully!`);
+    } else {
+      alert(`❌ Error: ${res?.message || "Failed to renew"}`);
+    }
   };
 
   const handleToggleSuspend = async () => {
+    const isCurrentlyExpired = status === "expired";
+    const confirmMsg = isCurrentlyExpired
+      ? `Reactivate ${client.name} with +30 days?`
+      : `Are you sure you want to SUSPEND / LOCK ${client.name}? Their staff will be immediately locked out!`;
+
+    if (!window.confirm(confirmMsg)) return;
+
     setLoadingAction(true);
-    // If currently expired or suspended, reactivate with +30 days, else suspend (set days: -1)
-    if (status === "expired") {
-      await onRenewQuick(client, 30);
-    } else {
-      await onRenewQuick(client, 0, true);
-    }
+    const res = isCurrentlyExpired
+      ? await onRenewQuick(client, 30, false)
+      : await onRenewQuick(client, 0, true);
+
     setLoadingAction(false);
+    if (res?.success) {
+      alert(`✅ ${client.name}: ${isCurrentlyExpired ? "Reactivated successfully!" : "System is now SUSPENDED / LOCKED!"}`);
+    } else {
+      alert(`❌ Error: ${res?.message || "Failed to update status"}`);
+    }
   };
 
   return (

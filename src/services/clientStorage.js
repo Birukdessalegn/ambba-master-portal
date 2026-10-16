@@ -21,8 +21,31 @@ export function getStoredClients() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_FLEET));
       return DEFAULT_FLEET;
     }
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_FLEET;
+    let parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_FLEET));
+      return DEFAULT_FLEET;
+    }
+
+    // Auto-migrate any client still pointing to localhost or missing vendorKey
+    let changed = false;
+    parsed = parsed.map((c) => {
+      if (c.id === "the-oak-club" && (!c.apiUrl || c.apiUrl.includes("localhost"))) {
+        changed = true;
+        return {
+          ...c,
+          apiUrl: "https://theoakapi.ambbatech.com",
+          vendorKey: c.vendorKey || "AMBBA-RBMS-MASTER-2026",
+        };
+      }
+      return c;
+    });
+
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+    }
+
+    return parsed;
   } catch (e) {
     return DEFAULT_FLEET;
   }
