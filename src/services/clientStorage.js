@@ -4,7 +4,7 @@ const DEFAULT_FLEET = [
   {
     id: "the-oak-club",
     name: "The Oak Club",
-    apiUrl: "http://localhost:5000",
+    apiUrl: "https://theoakapi.ambbatech.com",
     vendorKey: "AMBBA-RBMS-MASTER-2026",
     contactPerson: "Branch Manager",
     contactPhone: "+251 91 123 4567",

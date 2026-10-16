@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/ambbatxv/master.ambbatech.com/
+    - export DEPLOYPATH=/home/ambbatxv/masterbiruknati.ambbatech.com/
     - /bin/cp -R dist/. $DEPLOYPATH
