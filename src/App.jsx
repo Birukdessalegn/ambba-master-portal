@@ -77,7 +77,9 @@ export default function App() {
 
   // Delete Client
   const handleDeleteClient = (clientId) => {
-    if (window.confirm("Are you sure you want to remove this establishment from the Master Portal?")) {
+    const target = clients.find((c) => c.id === clientId);
+    const clientName = target ? target.name : "this venue";
+    if (window.confirm(`⚠️ REMOVE ESTABLISHMENT:\n\nAre you sure you want to remove "${clientName}" from your Master Portal dashboard?\n\nThis will remove it from your telemetry fleet view.`)) {
       const updated = clients.filter((c) => c.id !== clientId);
       setClients(updated);
       saveClients(updated);

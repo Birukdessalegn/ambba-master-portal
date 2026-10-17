@@ -45,22 +45,28 @@ export default function ClientCard({ client, liveData, onRenewQuick, onOpenCusto
     statusText = liveData?.error || "Offline / Unreachable";
   }
 
-  const handleQuick = async (days) => {
+    const handleQuick = async (days) => {
+    const label = days === 30 ? "+1 Month (30 Days)" : days === 90 ? "+3 Months (90 Days)" : `${days} Days`;
+    const confirmed = window.confirm(
+      `Confirm Extension:\n\nAre you sure you want to add ${label} to ${client.name}?\n\nThis will remotely activate and extend their license immediately.`
+    );
+    if (!confirmed) return;
+
     setLoadingAction(true);
     const res = await onRenewQuick(client, days, false);
     setLoadingAction(false);
     if (res?.success) {
-      alert(`✅ ${client.name}: Extended by ${days} days successfully!`);
+      alert(`✅ ${client.name}:\n\nExtended successfully by ${label}!\n${res.message || ""}`);
     } else {
-      alert(`❌ Error: ${res?.message || "Failed to renew"}`);
+      alert(`❌ Error for ${client.name}:\n\n${res?.message || "Failed to renew"}`);
     }
   };
 
   const handleToggleSuspend = async () => {
     const isCurrentlyExpired = status === "expired";
     const confirmMsg = isCurrentlyExpired
-      ? `Reactivate ${client.name} with +30 days?`
-      : `Are you sure you want to SUSPEND / LOCK ${client.name}? Their staff will be immediately locked out!`;
+      ? `Reactivate Client:\n\nAre you sure you want to UNLOCK and REACTIVATE ${client.name} with +30 days?`
+      : `⚠️ EMERGENCY LOCK WARNING:\n\nAre you sure you want to SUSPEND and LOCK ${client.name}?\n\nAll staff and terminals at ${client.name} will be immediately locked out until you reactivate them!`;
 
     if (!window.confirm(confirmMsg)) return;
 
@@ -71,9 +77,9 @@ export default function ClientCard({ client, liveData, onRenewQuick, onOpenCusto
 
     setLoadingAction(false);
     if (res?.success) {
-      alert(`✅ ${client.name}: ${isCurrentlyExpired ? "Reactivated successfully!" : "System is now SUSPENDED / LOCKED!"}`);
+      alert(`✅ ${client.name}:\n\n${isCurrentlyExpired ? "System reactivated successfully!" : "System is now SUSPENDED / LOCKED!"}`);
     } else {
-      alert(`❌ Error: ${res?.message || "Failed to update status"}`);
+      alert(`❌ Error for ${client.name}:\n\n${res?.message || "Failed to update status"}`);
     }
   };
 

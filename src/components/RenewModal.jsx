@@ -12,6 +12,12 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const durationLabel = customDate ? `Custom Expiry (${customDate})` : `+${days} Days`;
+    const confirmed = window.confirm(
+      `Confirm License Update:\n\nAre you sure you want to apply ${durationLabel} to ${client.name}?\n\nPayment notes: ${notes.trim() || "None"}`
+    );
+    if (!confirmed) return;
+
     setSubmitting(true);
     setResult(null);
 
