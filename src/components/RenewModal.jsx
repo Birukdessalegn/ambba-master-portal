@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Calendar, Check, AlertTriangle, ShieldCheck } from "lucide-react";
+import { X, Calendar, Check, AlertTriangle, ShieldCheck, RotateCcw } from "lucide-react";
 
 export default function RenewModal({ isOpen, onClose, client, onRenew }) {
   const [days, setDays] = useState(30);
@@ -35,6 +35,34 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
         onClose();
         setResult(null);
       }, 1500);
+    }
+  };
+
+  const handleClearResetDate = async () => {
+    const confirmed = window.confirm(
+      `⚠️ DANGER: CLEAR & RESET LICENSE\n\nAre you sure you want to completely CLEAR all assigned dates for "${client.name}" and reset them to 0 DAYS (Unactivated/Expired)?\n\nThis will immediately wipe their active days and lock the client system until you renew it.`
+    );
+    if (!confirmed) return;
+
+    setSubmitting(true);
+    setResult(null);
+
+    const res = await onRenew(client, {
+      reset: true,
+      notes: notes.trim() || "Cleared & Reset to 0 Days by AmbbaTech Master Portal",
+    });
+
+    setSubmitting(false);
+    setResult(res);
+
+    if (res.success) {
+      alert(`✅ ${client.name}:\n\nSubscription date has been cleared and reset to 0 Days!`);
+      setTimeout(() => {
+        onClose();
+        setResult(null);
+      }, 1200);
+    } else {
+      alert(`❌ Failed to clear date for ${client.name}:\n\n${res.message || "Unknown error"}`);
     }
   };
 
@@ -119,7 +147,8 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
+          {/* Action buttons */}
+          <div className="flex items-center justify-between gap-2 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
@@ -133,6 +162,23 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
               className="rounded-xl bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/30 disabled:opacity-50"
             >
               {submitting ? "Transmitting..." : "Apply & Unlock Remote"}
+            </button>
+          </div>
+
+          {/* Danger Zone: Clear Date to 0 Days */}
+          <div className="mt-3 pt-3 border-t border-rose-500/20 flex items-center justify-between bg-rose-500/5 -mx-6 -mb-6 p-4 rounded-b-3xl">
+            <div>
+              <p className="text-[11px] font-black text-rose-400">Clear & Reset Expiration</p>
+              <p className="text-[10px] text-slate-400">Wipe all days back to 0 (Unactivated/Expired)</p>
+            </div>
+            <button
+              type="button"
+              disabled={submitting}
+              onClick={handleClearResetDate}
+              className="flex items-center gap-1.5 rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-400 hover:bg-rose-600 hover:text-white transition cursor-pointer disabled:opacity-50 active:scale-95 shadow-sm"
+              title="Clear date and reset to 0 Days"
+            >
+              <RotateCcw size={13} /> Clear Date (0 Days)
             </button>
           </div>
         </form>

@@ -42,7 +42,7 @@ export async function fetchClientStatus(client) {
   }
 }
 
-export async function renewClientRemote(client, { days, newExpiryDate, notes, isSuspended = false, masterPin, vendorKey }) {
+export async function renewClientRemote(client, { days, newExpiryDate, notes, isSuspended = false, reset = false, masterPin, vendorKey }) {
   try {
     let baseUrl = client.apiUrl.replace(/\/+$/, "");
     const renewUrl = baseUrl.endsWith("/api")
@@ -71,6 +71,7 @@ export async function renewClientRemote(client, { days, newExpiryDate, notes, is
         notes: notes || "Renewed remotely via AmbbaTech Master Portal",
         masterPin: pinToSend,
         isSuspended,
+        reset,
       }),
     });
 

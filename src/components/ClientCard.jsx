@@ -194,7 +194,7 @@ export default function ClientCard({ client, liveData, onRenewQuick, onOpenCusto
             onClick={() => onOpenCustomRenew(client)}
             className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 py-1.5 text-[11px] font-bold text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
           >
-            <Settings size={12} /> Custom Date
+            <Settings size={12} /> Custom / Reset
           </button>
 
           <button
