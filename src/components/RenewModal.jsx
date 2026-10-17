@@ -12,7 +12,21 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const durationLabel = customDate ? `Custom Expiry (${customDate})` : `+${days} Days`;
+    let durationLabel = `+${days} Days`;
+    if (customDate) {
+      durationLabel = `Custom Expiry (${customDate})`;
+    } else if (days === 7) {
+      durationLabel = "+1 Week (7 Days)";
+    } else if (days === 30) {
+      durationLabel = "+1 Month (30 Days)";
+    } else if (days === 90) {
+      durationLabel = "+3 Months (90 Days)";
+    } else if (days === 180) {
+      durationLabel = "+6 Months (180 Days)";
+    } else if (days === 365) {
+      durationLabel = "+1 Year (365 Days)";
+    }
+
     const confirmed = window.confirm(
       `Confirm License Update:\n\nAre you sure you want to apply ${durationLabel} to ${client.name}?\n\nPayment notes: ${notes.trim() || "None"}`
     );
@@ -101,10 +115,12 @@ export default function RenewModal({ isOpen, onClose, client, onRenew }) {
         <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 text-xs">
           <div>
             <label className="block font-bold text-slate-300 mb-1.5">Extension Duration:</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
               {[
+                { label: "+1 Week", val: 7 },
                 { label: "+1 Month", val: 30 },
                 { label: "+3 Months", val: 90 },
+                { label: "+6 Months", val: 180 },
                 { label: "+1 Year", val: 365 },
               ].map((opt) => (
                 <button
